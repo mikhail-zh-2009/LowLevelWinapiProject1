@@ -3,6 +3,7 @@
 #include <iostream>
 
 unsigned int itime = 0;
+const WORD field_width = 192, field_height = 192;
 
 float clamp(float value, float minimum, float maximum) {
 	return fmaxf(minimum, fminf(value, maximum));
@@ -17,7 +18,7 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 }
 
 void DrawInWindow(HDC hDC) {
-	RECT r = { 0, 0, 192, 192 };
+	RECT r = { 0, 0, field_width, field_height };
 
 	BITMAPINFO bif;
 	ZeroMemory(&bif, sizeof(BITMAPINFO));
@@ -59,7 +60,7 @@ int main() {
 	RegisterClassW(&wndClass);
 
 	HWND wnd;
-	wnd = CreateWindow(L"window_class", L"Hello World!", WS_OVERLAPPEDWINDOW, 0, 0, 192 + 16, 192 + 39, NULL, NULL, NULL, NULL);
+	wnd = CreateWindow(L"window_class", L"Hello World!", WS_OVERLAPPEDWINDOW, 0, 0, field_width + 16, field_height + 39, NULL, NULL, NULL, NULL);
 	ShowWindow(wnd, SW_SHOWNORMAL);
 	HDC hDC = GetDC(wnd);
 

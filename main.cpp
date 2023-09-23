@@ -9,7 +9,13 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 }
 
 void DrawInWindow(HDC hDC) {
-	Rectangle(hDC, 0, 0, 100, 100);
+	HBITMAP hBMP = (HBITMAP)LoadImage(NULL, L"a.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+	HDC memDC = CreateCompatibleDC(hDC);
+	SelectObject(memDC, hBMP);
+	//BitBlt(hDC, 0, 0, 256, 256, memDC, 0, 0, SRCCOPY);
+	StretchBlt(hDC, 0, 0, 256, 256, memDC, 0, 0, 256, 256, SRCCOPY);
+	DeleteDC(memDC);
+	DeleteObject(hBMP);
 }
 
 int main() {
@@ -20,7 +26,7 @@ int main() {
 	RegisterClassW(&wndClass);
 
 	HWND wnd;
-	wnd = CreateWindow(L"window_class", L"Hello World!", WS_OVERLAPPEDWINDOW, 0, 0, 400, 400, NULL, NULL, NULL, NULL);
+	wnd = CreateWindow(L"window_class", L"Hello World!", WS_OVERLAPPEDWINDOW, 0, 0, 256 + 16, 256 + 39, NULL, NULL, NULL, NULL);
 	ShowWindow(wnd, SW_SHOWNORMAL);
 	HDC hDC = GetDC(wnd);
 

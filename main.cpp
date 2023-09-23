@@ -9,13 +9,32 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 }
 
 void DrawInWindow(HDC hDC) {
-	HBITMAP hBMP = (HBITMAP)LoadImage(NULL, L"a.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
-	HDC memDC = CreateCompatibleDC(hDC);
-	SelectObject(memDC, hBMP);
-	//BitBlt(hDC, 0, 0, 256, 256, memDC, 0, 0, SRCCOPY);
-	StretchBlt(hDC, 0, 0, 256, 256, memDC, 0, 0, 256, 256, SRCCOPY);
-	DeleteDC(memDC);
-	DeleteObject(hBMP);
+	RECT r = { 0, 0, 256, 256 };
+
+	BITMAPINFO bif;
+	ZeroMemory(&bif, sizeof(BITMAPINFO));
+
+	bif.bmiHeader.biSize = sizeof(bif);
+
+	RGBQUAD* im = new RGBQUAD[r.right * r.bottom];
+
+	for (int i(0); i < 256; i++)
+		for (int ii(0); ii < 256; ii++)
+		{
+			im[r.right * i + ii].rgbBlue = rand() % 256;
+			im[r.right * i + ii].rgbRed = rand() % 256;
+			im[r.right * i + ii].rgbGreen = rand() % 256;
+		}
+
+	bif.bmiHeader.biHeight = -r.bottom;
+	bif.bmiHeader.biWidth = r.right;
+	bif.bmiHeader.biSizeImage = ((bif.bmiHeader.biWidth * 24 + 31) & ~31) / 8 * bif.bmiHeader.biHeight;
+	bif.bmiHeader.biPlanes = 1;
+	bif.bmiHeader.biBitCount = sizeof(RGBQUAD) * 8;
+
+	SetDIBitsToDevice(hDC, 0, 0, r.right, r.bottom, 0, 0, 0, r.bottom, im, &bif, DIB_PAL_COLORS);
+
+	delete[] im;
 }
 
 int main() {

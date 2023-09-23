@@ -1,4 +1,5 @@
 #include <windows.h>
+#include <math.h>
 
 LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 	if (msg == WM_DESTROY) {
@@ -9,7 +10,7 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 }
 
 void DrawInWindow(HDC hDC) {
-	RECT r = { 0, 0, 256, 256 };
+	RECT r = { 0, 0, 192, 192 };
 
 	BITMAPINFO bif;
 	ZeroMemory(&bif, sizeof(BITMAPINFO));
@@ -18,13 +19,19 @@ void DrawInWindow(HDC hDC) {
 
 	RGBQUAD* im = new RGBQUAD[r.right * r.bottom];
 
-	for (int i(0); i < 256; i++)
-		for (int ii(0); ii < 256; ii++)
-		{
-			im[r.right * i + ii].rgbBlue = rand() % 256;
-			im[r.right * i + ii].rgbRed = rand() % 256;
-			im[r.right * i + ii].rgbGreen = rand() % 256;
+	for (int i(0); i < r.right; i++) {
+		for (int ii(0); ii < r.bottom; ii++) {
+			float x = (float)i;
+			float y = (float)ii;
+			int
+				red		= rand() % 256,
+				green	= rand() % 256,
+				blue	= rand() % 256;
+			im[r.right * i + ii].rgbBlue = blue;
+			im[r.right * i + ii].rgbRed = red;
+			im[r.right * i + ii].rgbGreen = green;
 		}
+	}
 
 	bif.bmiHeader.biHeight = -r.bottom;
 	bif.bmiHeader.biWidth = r.right;
@@ -45,7 +52,7 @@ int main() {
 	RegisterClassW(&wndClass);
 
 	HWND wnd;
-	wnd = CreateWindow(L"window_class", L"Hello World!", WS_OVERLAPPEDWINDOW, 0, 0, 256 + 16, 256 + 39, NULL, NULL, NULL, NULL);
+	wnd = CreateWindow(L"window_class", L"Hello World!", WS_OVERLAPPEDWINDOW, 0, 0, 192 + 16, 192 + 39, NULL, NULL, NULL, NULL);
 	ShowWindow(wnd, SW_SHOWNORMAL);
 	HDC hDC = GetDC(wnd);
 

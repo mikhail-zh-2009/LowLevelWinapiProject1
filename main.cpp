@@ -1,5 +1,12 @@
 #include <windows.h>
-#include <math.h>
+#include <cmath>
+#include <iostream>
+
+unsigned int itime = 0;
+
+float clamp(float value, float minimum, float maximum) {
+	return fmaxf(minimum, fminf(value, maximum));
+}
 
 LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 	if (msg == WM_DESTROY) {
@@ -24,9 +31,9 @@ void DrawInWindow(HDC hDC) {
 			float x = (float)i;
 			float y = (float)ii;
 			int
-				red		= rand() % 256,
-				green	= rand() % 256,
-				blue	= rand() % 256;
+				red		= (int)clamp(x, 0, 255),
+				green	= (int)clamp(y, 0, 255),
+				blue	= (int)clamp(sinf(((float)itime / 100.0f) * 0.5f + 0.5f) * 255.0f, 0, 255);
 			im[r.right * i + ii].rgbBlue = blue;
 			im[r.right * i + ii].rgbRed = red;
 			im[r.right * i + ii].rgbGreen = green;
@@ -65,6 +72,7 @@ int main() {
 		} else {
 			DrawInWindow(hDC);
 		}
+		itime++;
 	}
 
 	return 0;
